@@ -8,6 +8,7 @@ const Square = mongoose.model(
     balance: { type: Number, default: 0 },
     name: { type: String, required: true },
     description: String,
+    goal: { type: Number, required: true },
   })
 );
 

@@ -41,9 +41,10 @@ const mutation = new GraphQLObjectType({
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
         description: { type: GraphQLString },
+        goal: { type: new GraphQLNonNull(GraphQLInt) },
       },
       resolve(parentValue, { name, description }) {
-        return new Square({ name, description }).save();
+        return new Square({ name, description, goal }).save();
       },
     },
     addMoneyToSquare: {

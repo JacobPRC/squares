@@ -17,6 +17,7 @@ const SquareType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     description: { type: GraphQLString },
+    goal: { type: GraphQLInt },
   }),
 });
 
