@@ -17,7 +17,7 @@ mongoose.connect(
   { useNewUrlParser: true }
 );
 
-require("./models/MainAcc");
+require("./models/User");
 require("./models/Square");
 
 app.use(cors());

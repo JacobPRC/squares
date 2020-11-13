@@ -1,10 +1,10 @@
 const graphql = require("graphql");
 
-const MainAcc = require("../models/MainAcc");
+const User = require("../models/User");
 const Square = require("../models/Square");
 const Types = require("./Types");
 
-const { MainAccType, SquareType } = Types;
+const { UserType, SquareType } = Types;
 
 const {
   GraphQLObjectType,
@@ -17,20 +17,24 @@ const {
 const mutation = new GraphQLObjectType({
   name: "mutation",
   fields: {
-    initializeMainAccount: {
-      type: MainAccType,
-      resolve(parentValue, args) {
-        return new MainAcc({}).save();
+    createUser: {
+      type: UserType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
+      },
+      resolve(parentValue, { name, age }) {
+        return new User({ name, age }).save();
       },
     },
-    addMoneyToMainAccount: {
-      type: MainAccType,
+    addMoneyToUsersAcc: {
+      type: UserType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLID) },
         amount: { type: new GraphQLNonNull(GraphQLInt) },
       },
       resolve(parentValue, { id, amount }) {
-        return MainAcc.findById(id).then((acc) => {
+        return User.findById(id).then((acc) => {
           acc.balance += amount;
           return acc.save();
         });
@@ -42,9 +46,16 @@ const mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         description: { type: GraphQLString },
         goal: { type: new GraphQLNonNull(GraphQLInt) },
+        userId: { type: new GraphQLNonNull(GraphQLID) },
       },
-      resolve(parentValue, { name, description }) {
-        return new Square({ name, description, goal }).save();
+      resolve(parentValue, { name, description, goal, userId }) {
+        return new Square({ name, description, goal }).save().then((sq) => {
+          return User.findByIdAndUpdate(
+            userId,
+            { $push: { squares: sq._id } },
+            { new: true, useFindAndModify: false }
+          );
+        });
       },
     },
     addMoneyToSquare: {

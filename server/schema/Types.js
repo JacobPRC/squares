@@ -1,12 +1,30 @@
 const graphql = require("graphql");
+const { populate } = require("../models/User");
+const User = require("../models/User");
 
-const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLInt } = graphql;
+const {
+  GraphQLObjectType,
+  GraphQLID,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLList,
+} = graphql;
 
-const MainAccType = new GraphQLObjectType({
-  name: "mainAccount",
+const UserType = new GraphQLObjectType({
+  name: "user",
   fields: () => ({
     balance: { type: GraphQLInt },
     id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    age: { type: GraphQLInt },
+    squares: {
+      type: new GraphQLList(SquareType),
+      resolve(parentValue, args) {
+        return User.findById(parentValue.id)
+          .populate("squares")
+          .then((user) => user.squares);
+      },
+    },
   }),
 });
 
@@ -21,4 +39,4 @@ const SquareType = new GraphQLObjectType({
   }),
 });
 
-module.exports = { MainAccType, SquareType };
+module.exports = { UserType, SquareType };
