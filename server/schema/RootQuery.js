@@ -24,12 +24,6 @@ const RootQuery = new GraphQLObjectType({
         return User.find({});
       },
     },
-    squares: {
-      type: new GraphQLList(SquareType),
-      resolve(parentValue, args) {
-        return Square.find({});
-      },
-    },
     square: {
       type: SquareType,
       args: { id: { type: new GraphQLNonNull(GraphQLID) } },
